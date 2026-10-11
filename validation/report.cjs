@@ -71,6 +71,13 @@ const allIds = ['drastic', 'mi', 'mic', 'nmi', 'nmic', 'pr', 'mc', 'nc', 'mv', '
 function totals(res) {
   return allIds.reduce((a, id) => { const s = res.stats[id]; if (!s) return a; a.c += s.total - s.javaTimeout - s.javaError; a.m += s.match + s.convention; a.b += s.jsBetter; a.d += s.mismatch; a.t += s.javaTimeout; a.e += s.javaError; return a; }, { c: 0, m: 0, b: 0, d: 0, t: 0, e: 0 });
 }
+function fixedSummary(res, t) {
+  const ice = allIds.filter(id => id.startsWith('iceberg')).reduce((a, id) => a + (res.stats[id] ? res.stats[id].javaTimeout : 0), 0);
+  const errs = Object.entries(allIds.reduce((a, id) => { const d = res.details[id]; if (d) for (const [m, c] of Object.entries(d.javaErrors)) a[id + ': ' + m] = c; return a; }, {})).map(([m, c]) => c + ' × ' + m);
+  return 'Over all ' + allIds.length + ' measures, ' + t.m + ' of ' + t.c + ' comparisons agree' + (t.b ? ', on the other ' + t.b + ' the port finds a better optimum of a fuzzy measure' : '')
+    + (t.d ? ', and ' + t.d + ' differ' : ', and none differ') + '; Java threw ' + (t.e ? t.e + ' exceptions (' + errs.join('; ') + ')' : 'no exceptions')
+    + ' and did not finish ' + t.t + ' computations in time' + (ice ? ' (' + ice + ' of them Iceberg computations with the 5 s limit)' : '') + '.';
+}
 p('## Fixed TweetyProject sources');
 p();
 p('The defects found by this validation are corrected in the TweetyProject working tree (not committed). The changes are small and local:');
@@ -97,14 +104,14 @@ p();
 measureTable(fixed, allIds);
 p();
 const ft = totals(fixed), fx = totals(fixedXor);
-p('Over all ' + allIds.length + ' measures, ' + ft.m + ' of ' + ft.c + ' comparisons agree' + (ft.b ? ', on ' + ft.b + ' more the port finds a better optimum of a fuzzy measure' : '') + (ft.d ? ', and ' + ft.d + ' differ' : ', and none differ') + '; Java threw ' + ft.e + ' exceptions (' + (ft.e ? Object.entries(allIds.reduce((a, id) => { const d = fixed.details[id]; if (d) for (const [m, c] of Object.entries(d.javaErrors)) a[id + ': ' + m] = c; return a; }, {})).map(([m, c]) => c + ' × ' + m).join('; ') : 'none') + ') and did not finish ' + ft.t + ' computations in time.');
+p(fixedSummary(fixed, ft));
 for (const id of allIds) { const d = fixed.details[id]; if (d && d.mismatches.length) { p('- `' + id + '`:'); examples(fixed, id, 3); } }
 p();
 p('**300 knowledge bases with exclusive or** (`data/kbs-xor.txt`; the original sources fail on almost all of them):');
 p();
 measureTable(fixedXor, allIds);
 p();
-p('Over all ' + allIds.length + ' measures, ' + fx.m + ' of ' + fx.c + ' comparisons agree' + (fx.b ? ', on ' + fx.b + ' more the port finds a better optimum of a fuzzy measure' : '') + (fx.d ? ', and ' + fx.d + ' differ' : ', and none differ') + '; Java threw ' + fx.e + ' exceptions and did not finish ' + fx.t + ' computations in time.');
+p(fixedSummary(fixedXor, fx));
 for (const id of allIds) { const d = fixedXor.details[id]; if (d && d.mismatches.length) { p('- `' + id + '`:'); examples(fixedXor, id, 3); } }
 p();
 if (checksFixed.length) {

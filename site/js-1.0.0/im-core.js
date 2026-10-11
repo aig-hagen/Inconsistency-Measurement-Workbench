@@ -2367,15 +2367,24 @@ function twCnf(f) {
       if (f.k.every(isLiteral)) return And([f]);
       const conjs = new Map();
       for (const g of f.k) { const cls = twSet(twCnf(g).k); conjs.set(cls.map(ukey).sort().join('#'), cls); }
-      let perms = [[]];
+      // distribute: one clause from each operand's CNF; Java builds all combinations and
+      // trims the result to a set of clauses (sets of literals), so partial disjunctions
+      // with the same literals can be merged on the way
+      let partial = new Map([['', []]]);
       for (const cls of conjs.values()) {
-        const next = [];
-        for (const pm of perms) for (const cl of cls) next.push(pm.concat([cl]));
-        perms = next;
-        if (perms.length > 20000) throw new LimitError('CNF too large');
+        const next = new Map();
+        for (const lits of partial.values()) {
+          for (const cl of cls) {
+            const merged = twSet(lits.concat(cl.t === 'or' ? cl.k : [cl]));
+            const k = merged.map(ukey).sort().join('|');
+            if (!next.has(k)) next.set(k, merged);
+          }
+        }
+        partial = next;
+        if (partial.size > 200000) throw new LimitError('CNF too large');
+        checkDeadline();
       }
-      const newConjs = perms.map(pm => Or([].concat(...twSet(pm).map(cl => cl.t === 'or' ? cl.k : [cl]))));
-      return twTrim(And(twSet(newConjs)));
+      return twTrim(And(twSet(Array.from(partial.values()).map(l => Or(l)))));
     }
     case 'impl': return twCnf(Or([Not(f.k[0]), f.k[1]]));
     case 'equiv': return twCnf(And([Or([Not(f.k[0]), f.k[1]]), Or([Not(f.k[1]), f.k[0]])]));

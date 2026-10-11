@@ -86,9 +86,10 @@ Run the tests: `npm test`.
 
 Every measure returns the value of the corresponding TweetyProject class, including
 its conventions (∞ for hitting set, Dalal-Sum/Max and MCSC with an unsatisfiable
-formula; natural logarithm for the independent-set measure; NaN where Java divides 0
-by 0). Exponential naive algorithms of the Java code are replaced by equivalent
-ones:
+formula and for contension without a paraconsistent model; natural logarithm for the
+independent-set measure; NaN where Java divides 0 by 0). Where the validation found
+defects in the Java code, the port computes the corrected value (see below).
+Exponential naive algorithms of the Java code are replaced by equivalent ones:
 
 | Measures | TweetyProject | This port |
 |---|---|---|
@@ -102,6 +103,26 @@ ones:
 | Fuzzy | general optimiser (e.g. CMA-ES) | exact over {0, ½, 1}ⁿ for the minimum t-norm; multi-start local search for the product t-norm |
 | Iceberg, prime-implicant based | direct | direct port |
 
+## Validation
+
+`validation/` compares the port with the Java classes (Sat4j, naive MUS enumerator,
+GLPK, CMA-ES) on 1000 random knowledge bases and on 300 further bases in which
+exclusive or occurs at the top level and over arbitrary operands. `validation/REPORT.md`
+contains the results, the examples and the commands to reproduce them.
+
+- **Corrected TweetyProject sources** (commit `2abd5ba` with the corrections of the
+  defects listed in the report; uncommitted changes in the TweetyProject working tree):
+  over 40 measures and variants, 36545 of 36548 comparisons on the 1000 bases and
+  11957 of 11972 on the 300 bases agree; on the remaining 3 and 15 the port finds a
+  better optimum of the product fuzzy measure than CMA-ES. No value differs, and Java
+  throws no exception. Computations beyond the Java time limit (10 s, retried with
+  60 s; Iceberg 5 s) are excluded. 32 direct checks of the corrections
+  (`validation/java/FixChecks.java`) pass; 29 of them fail with the original sources.
+- **Original sources** (commit `2abd5ba`): the 23 main measures agree on 22540 of 22579
+  comparisons; the 39 differences are forgetting-based values that are wrong in Java
+  because `Implication.clone()` and `Equivalence.clone()` share their operands. The
+  report also covers the fuzzy, Iceberg, SAT-based and Shapley values of the original
+  code and the effects of each defect.
 
 ## License and credits
 
