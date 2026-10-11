@@ -1,0 +1,1 @@
+{"op":"iceberg:classical","tested":60,"changed":27,"jsInvariant":60,"examples":[{"kb":20,"java":3,"javaRenamed":2},{"kb":45,"java":3,"javaRenamed":4},{"kb":181,"java":6,"javaRenamed":3},{"kb":256,"java":3,"javaRenamed":4},{"kb":263,"java":3,"javaRenamed":4}]}

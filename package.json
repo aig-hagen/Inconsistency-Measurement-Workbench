@@ -1,0 +1,15 @@
+{
+  "name": "im-web",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Inconsistency Measurement Workbench: JavaScript port of the TweetyProject inconsistency measures with a single-page web interface",
+  "license": "LGPL-3.0",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node build.mjs && node test/smoke.cjs && node test/sat-selfcheck.cjs && node test/crosscheck.cjs",
+    "validate:gen": "node validation/gen.cjs",
+    "validate:js": "node validation/run-js.cjs validation/data/kbs.txt validation/data/js-results.jsonl drastic,mi,mic,nmi,nmic,pr,mc,nc,mv,df,is,mcsc,cc,csp,eta,contension,hs,dalalsum,dalalmax,dalalhit,pm,fb,pib,fuzzy:product:t,fuzzy:product:sum,fuzzy:min:t,fuzzy:min:sum,iceberg:identity,iceberg:conjuncts,iceberg:smallest_conjuncts,iceberg:classical,iceberg:classical:sum,iceberg:prime_implicants,iceberg:opposite_literals,iceberg:modus_ponens",
+    "validate:sat": "node validation/run-sat.cjs",
+    "validate:report": "node validation/report.cjs"
+  }
+}

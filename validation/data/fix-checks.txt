@@ -1,0 +1,33 @@
+ok    PlParser a=>b=>c: (a=>(b=>c))
+ok    PlParser a<=>b<=>c: (a<=>(b<=>c))
+ok    Implication.replace() leaves the original unchanged: (a=>b)
+ok    Equivalence.clone() is independent of the original: (a<=>b)
+ok    ExclusiveDisjunction.isClause() for a^^b: false
+ok    toCnf() of (a&&b)^^c is a conjunction of clauses: true
+ok    toCnf() of (a&&b)^^c is equivalent to (a&&b)^^c: true
+ok    Sat4jSolver on a^^b: true
+ok    Sat4jSolver on (-^^a)||b: true
+ok    Sat4jSolver on a^^a: false
+ok    HsSatInconsistencyMeasure on a ; a=>b ; b=>c ; !c: 1.0
+ok    DSumSatInconsistencyMeasure on a ; a=>b ; b=>c ; !c: 1.0
+ok    ContensionSatInconsistencyMeasure on a ; a=>b ; b=>c ; !c: 1.0
+ok    ContensionSatInconsistencyMeasure on a ; !+: Infinity
+ok    ContensionInconsistencyMeasure on a ; !+: Infinity
+ok    ContensionSatInconsistencyMeasure on a ; !a ; b ; (b=>c)&&!c (nested implication): 2.0
+ok    HsSatInconsistencyMeasure on a ^^ b ; a ; b: 1.0
+ok    DSumSatInconsistencyMeasure on x1&&!x11&&z_k&&(!)y, k=0..11: 6.0
+ok    DMaxSatInconsistencyMeasure on x1&&!x11&&z_k&&(!)y, k=0..11: 1.0
+ok    MathTools.faculty(13): 6227020800
+ok    Shapley value (drastic) of a in a ; !a ; b2 ; ... ; b12: 0.5000000000000007
+ok    Safe-formula independence applicable to [a, b, !b]: true
+ok    Safe-formula independence for MI: true
+ok    Safe-formula independence for normalized MI (violated): false
+ok    prime implicants of a&&(+=>a): [a]
+ok    prime implicants of (e||!e||d)&&+&&!d: [!d]
+ok    prime implicants of !+: []
+ok    FuzzyInconsistencyMeasure (product, T) on +: 0.0
+ok    FuzzyInconsistencyMeasure (minimum, sum) on !+: 1.0
+ok    Iceberg (modus ponens) on a ; c&&(a=>b) ; !b terminates: 1.0
+ok    Iceberg (opposite literals) on a ; !a: 1.0
+ok    Iceberg (conjuncts) on (a&&b)&&c ; !b: a formula is its own conjunct: 1.0
+all checks passed

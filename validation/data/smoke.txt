@@ -1,0 +1,18 @@
+# kb 0
+a
+!a
+# kb 1
+a
+!a
+b
+!b
+a || b
+# kb 2
+a
+a => b
+b => c
+!c
+# kb 3
+a && !a
+b
+# kb 4
